@@ -7,13 +7,157 @@
     <title>Wind of Revival - Joe Mettle</title>
     <link href="../public/css/main.css" rel="stylesheet">
     <script>
-        // Simulating progress for demonstration
-        let progress = 0;
-        setInterval(() => {
-            progress += 1;
-            if (progress > 100) progress = 0;
-            document.querySelector('.progress-bar').style.width = `${progress}%`;
-        }, 100);
+        let currentTrack = 0;
+        let isPlaying = false;
+        let audio = new Audio();
+
+        // Example albumData
+        const albumData = {
+            title: "Salvation Honour",
+            artist: "Joe Mettle",
+            year: "2019",
+            coverArt: "../public/img/coverArt.jpg",
+            duration: "",
+            tracks: [],
+            loadTracks: async function() {
+                const audioFiles = [
+                    "../public/music/evidence.mp3",
+                    // Add more audio files here
+                ];
+
+                let totalDuration = 0;
+
+                for (let url of audioFiles) {
+                    const audio = new Audio(url);
+                    await new Promise(resolve => {
+                        audio.addEventListener('loadedmetadata', () => {
+                            const title = url.split('/').pop().replace('.mp3', '');
+                            const duration = audio.duration;
+                            totalDuration += duration;
+                            this.tracks.push({ title, duration: formatDuration(duration), url });
+                            resolve();
+                        });
+                    });
+                }
+
+                this.duration = formatDuration(totalDuration);
+            }
+        };
+
+        function formatDuration(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = Math.floor(seconds % 60);
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await albumData.loadTracks();
+            updateUI(albumData);
+            setupEventListeners();
+            updateProgressBar();
+        });
+
+        function updateUI(albumData) {
+            document.title = `${albumData.title} - ${albumData.artist}`;
+            document.querySelector('.album-title').textContent = albumData.title;
+            document.querySelectorAll('.artist-name').forEach(el => el.textContent = albumData.artist);
+            document.querySelector('.album-info').textContent = `Album • ${albumData.year}`;
+            document.querySelector('.album-stats').textContent = `${albumData.tracks.length} songs • ${albumData.duration}`;
+            
+            const coverArts = document.querySelectorAll('.cover-art');
+            coverArts.forEach(coverArt => {
+                coverArt.style.backgroundImage = `url('${albumData.coverArt}')`;
+            });
+            
+            const songList = document.getElementById('songList');
+            songList.innerHTML = '';
+            albumData.tracks.forEach((track, index) => {
+                const li = document.createElement('li');
+                li.className = 'flex justify-between items-center p-2 hover:bg-gray-800 cursor-pointer';
+                li.innerHTML = `
+                    <div>
+                        <span class="font-semibold">${index + 1}</span>
+                        <span class="ml-4">${track.title}</span>
+                    </div>
+                    <span>${track.duration}</span>
+                `;
+                li.addEventListener('click', () => playSong(index));
+                songList.appendChild(li);
+            });
+        }
+
+        function setupEventListeners() {
+            document.querySelectorAll('.play-button').forEach(button => {
+                button.addEventListener('click', togglePlayPause);
+            });
+            document.querySelectorAll('.prev-button').forEach(button => {
+                button.addEventListener('click', playPrevious);
+            });
+            document.querySelectorAll('.next-button').forEach(button => {
+                button.addEventListener('click', playNext);
+            });
+        }
+
+        function togglePlayPause() {
+            if (isPlaying) {
+                audio.pause();
+            } else {
+                if (!audio.src) {
+                    playSong(0);
+                } else {
+                    audio.play();
+                }
+            }
+            isPlaying = !isPlaying;
+            updatePlayButton();
+        }
+
+        function playPrevious() {
+            if (currentTrack > 0) {
+                currentTrack--;
+                playSong(currentTrack);
+            }
+        }
+
+        function playNext() {
+            if (currentTrack < albumData.tracks.length - 1) {
+                currentTrack++;
+                playSong(currentTrack);
+            }
+        }
+
+        function playSong(index) {
+            currentTrack = index;
+            audio.src = albumData.tracks[index].url;
+            audio.play();
+            isPlaying = true;
+            updatePlayButton();
+            updateCurrentSongInfo(index);
+        }
+
+        function updatePlayButton() {
+            const playButtons = document.querySelectorAll('.play-button img');
+            playButtons.forEach(button => {
+                button.src = isPlaying ? '../public/img/pauseButton.svg' : '../public/img/playButton.svg';
+            });
+        }
+
+        function updateProgressBar() {
+            const progressBars = document.querySelectorAll('.progress-bar');
+            audio.addEventListener('timeupdate', () => {
+                const progress = (audio.currentTime / audio.duration) * 100;
+                progressBars.forEach(bar => {
+                    bar.style.width = `${progress}%`;
+                });
+            });
+        }
+
+        function updateCurrentSongInfo(index) {
+            const currentSongTitles = document.querySelectorAll('.current-song-title');
+            currentSongTitles.forEach(title => {
+                title.textContent = albumData.tracks[index].title;
+            });
+        }
     </script>
 </head>
 
@@ -25,20 +169,20 @@
             <div class="flex items-center">
                 <img src="../public/img/coverArt2.jpg" alt="Album Cover" class="w-12 h-12 rounded-md mr-3">
                 <div>
-                    <p class="font-semibold text-sm">Spirit Move</p>
-                    <p class="text-xs text-gray-400">Joe Mettle</p>
+                    <p class="font-semibold text-sm current-song-title"></p>
+                    <p class="text-xs text-gray-400 artist-name"></p>
                 </div>
             </div>
             <div class="flex items-center">
-                <button class="mr-4">
+                <button class="mr-4 prev-button">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                     </svg>
                 </button>
-                <button class="bg-white text-black p-[17px] rounded-full overflow-hidden w-12 h-12 ">
+                <button class="play-button bg-white text-black p-[17px] rounded-full overflow-hidden w-12 h-12">
                     <img src="../public/img/playButton.svg" alt="Play Button" class="object-cover">
                 </button>
-                <button class="ml-4">
+                <button class="ml-4 next-button">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                     </svg>
@@ -48,33 +192,34 @@
         <div class="progress-bar w-full h-1 bg-gradient-to-r from-blue-500 to-purple-500" style="width: 0%;"></div>
     </div>
  
-    <div class="fixed inset-0 bg-cover bg-center bg-no-repeat blur-3xl opacity-30"
+    <div class="fixed inset-0 bg-cover bg-center bg-no-repeat blur-3xl opacity-30 cover-art"
         style="background-image: url('../public/img/coverArt2.jpg');"></div>
     <div class="container mx-auto px-4 py-8 relative z-10">
         <div class="flex flex-col md:flex-row">
             <div id="cover" class="md:w-2/5 mb-8 md:mb-0 text-center md:sticky md:top-8 md:self-start">
-                <div class="w-[300px] h-[300px] rounded-lg shadow-lg bg-gray-800 mx-auto bg-cover bg-no-repeat bg-center"
+                <div class="w-[300px] h-[300px] rounded-lg shadow-lg bg-gray-800 mx-auto bg-cover bg-no-repeat bg-center cover-art mb-5"
                     style="background-image: url('../public/img/coverArt2.jpg'); box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);"
                     alt="Wind of Revival Album Cover"></div>
-                <h1 class="album-title text-2xl font-bold mt-4">Wind of Revival: A Spiritual Journey Through Gospel
-                    Music</h1>
-                <p class="text-gray-400">Album • 2019</p>
-                <p class="text-gray-400">150 songs • 12 hours, 30 minutes</p>
+           
+                <h1 class="album-title text-2xl font-bold mt-11"></h1>
+                <p class="text-gray-400 artist-name"></p>
+                <p class="text-gray-400 album-info"></p>
+                <p class="text-gray-400 album-stats"></p>
                 <div class="flex space-x-4 mt-4 justify-center items-center">
                     <button class="bg-gray-800 p-2 rounded-full"><svg class="w-5 h-5" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                         </svg></button>
-                    <button class="bg-gray-800 p-2 rounded-full"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+                    <button class="bg-gray-800 p-2 rounded-full prev-button"><svg class="w-5 h-5" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
                             </path>
                         </svg></button>
-                    <button class="bg-white text-black p-[17px] rounded-full overflow-hidden w-12 h-12 ">
+                    <button class="play-button bg-white text-black p-[17px] rounded-full overflow-hidden w-12 h-12">
                         <img src="../public/img/playButton.svg" alt="Play Button" class="object-cover">
                     </button>
-                    <button class="bg-gray-800 p-2 rounded-full"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+                    <button class="bg-gray-800 p-2 rounded-full next-button"><svg class="w-5 h-5" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
                             </path>
@@ -88,129 +233,7 @@
                 </div>
             </div>
             <div id="songList" class="md:w-3/5 md:pl-8 p-5">
-                <ul class="space-y-4">
-                    <li class="flex justify-between items-center">
-                        <div>
-                            <span class="font-semibold">1</span>
-                            <span class="ml-4">Spirit Move</span>
-                        </div>
-                        <span>5:07</span>
-                    </li>
-                    <li class="flex justify-between items-center">
-                        <div>
-                            <span class="font-semibold">2</span>
-                            <span class="ml-4">Mehia Wo Yesu</span>
-                        </div>
-                        <span>5:13</span>
-                    </li>
-                    <li class="flex justify-between items-center">
-                        <div>
-                            <span class="font-semibold">3</span>
-                            <span class="ml-4">Power of Prayer</span>
-                        </div>
-                        <span>8:20</span>
-                    </li>
-                    <li class="flex justify-between items-center">
-                        <div>
-                            <span class="font-semibold">4</span>
-                            <span class="ml-4">Tumi Wura</span>
-                        </div>
-                        <span>7:50</span>
-                    </li>
-                    <li class="flex justify-between items-center">
-                        <div>
-                            <span class="font-semibold">5</span>
-                            <span class="ml-4">Halleluyah Song</span>
-                        </div>
-                        <span>4:55</span>
-                    </li>
-                    <li class="flex justify-between items-center">
-                        <div>
-                            <span class="font-semibold">6</span>
-                            <span class="ml-4">Yahweh</span>
-                        </div>
-                        <span>6:10</span>
-                    </li>
-                    <li class="flex justify-between items-center">
-                        <div>
-                            <span class="font-semibold">7</span>
-                            <span class="ml-4">Fa Me Sie</span>
-                        </div>
-                        <span>1:22</span>
-                    </li>
-                    <li class="flex justify-between items-center">
-                        <div>
-                            <span class="font-semibold">8</span>
-                            <span class="ml-4">Hide Me</span>
-                        </div>
-                        <span>6:29</span>
-                    </li>
-                    <li class="flex justify-between items-center">
-                        <div>
-                            <span class="font-semibold">9</span>
-                            <span class="ml-4">Makamfo</span>
-                        </div>
-                        <span>5:26</span>
-                    </li>
-                    <li class="flex justify-between items-center">
-                        <div>
-                            <span class="font-semibold">10</span>
-                            <span class="ml-4">Sunsum Nwom</span>
-                        </div>
-                        <span>6:14</span>
-                    </li>
-                    <li class="flex justify-between items-center">
-                        <div>
-                            <span class="font-semibold">11</span>
-                            <span class="ml-4">Praise Medley</span>
-                        </div>
-                        <span>7:30</span>
-                    </li>
-                    <li class="flex justify-between items-center">
-                        <div>
-                            <span class="font-semibold">12</span>
-                            <span class="ml-4">Yesu Adi Nkunim</span>
-                        </div>
-                        <span>5:45</span>
-                    </li>
-                    <li class="flex justify-between items-center">
-                        <div>
-                            <span class="font-semibold">13</span>
-                            <span class="ml-4">Onwanwani</span>
-                        </div>
-                        <span>4:58</span>
-                    </li>
-                    <!-- Additional songs up to 150 -->
-                    <li class="flex justify-between items-center">
-                        <div>
-                            <span class="font-semibold">14</span>
-                            <span class="ml-4">Grace Overflow</span>
-                        </div>
-                        <span>5:32</span>
-                    </li>
-                    <li class="flex justify-between items-center">
-                        <div>
-                            <span class="font-semibold">15</span>
-                            <span class="ml-4">Onyame Ye Odo</span>
-                        </div>
-                        <span>4:47</span>
-                    </li>
-                    <!-- ... (continue with more songs) ... -->
-                    <li class="flex justify-between items-center">
-                        <div>
-                            <span class="font-semibold">149</span>
-                            <span class="ml-4">Eternal Praise</span>
-                        </div>
-                        <span>5:15</span>
-                    </li>
-                    <li class="flex justify-between items-center">
-                        <div>
-                            <span class="font-semibold">150</span>
-                            <span class="ml-4">Closing Worship</span>
-                        </div>
-                        <span>6:20</span>
-                    </li>
-                </ul>
+                <!-- Song list will be dynamically populated here -->
             </div>
         </div>
     </div>
