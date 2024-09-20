@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.album-title {
+    max-width: 300px;
+    margin: 0 auto;
+    line-height: 1.2;
+    max-height: 2.4em;
+    overflow: hidden;
+    position: relative;
+    text-overflow: ellipsis; /* Indicate truncation with ellipsis */
+}

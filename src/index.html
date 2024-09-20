@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wind of Revival - Joe Mettle</title>
+    <link href="../public/css/main.css" rel="stylesheet">
+    <script>
+        // Simulating progress for demonstration
+        let progress = 0;
+        setInterval(() => {
+            progress += 1;
+            if (progress > 100) progress = 0;
+            document.querySelector('.progress-bar').style.width = `${progress}%`;
+        }, 100);
+    </script>
+</head>
+
+<body class="bg-gray-900 text-white font-sans relative">
+
+    <!-- Mobile Player -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-gray-900 flex flex-col z-20 shadow-lg">
+        <div class="flex items-center justify-between p-3">
+            <div class="flex items-center">
+                <img src="../public/img/coverArt2.jpg" alt="Album Cover" class="w-12 h-12 rounded-md mr-3">
+                <div>
+                    <p class="font-semibold text-sm">Spirit Move</p>
+                    <p class="text-xs text-gray-400">Joe Mettle</p>
+                </div>
+            </div>
+            <div class="flex items-center">
+                <button class="mr-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </button>
+                <button class="bg-white text-black p-[17px] rounded-full overflow-hidden w-12 h-12 ">
+                    <img src="../public/img/playButton.svg" alt="Play Button" class="object-cover">
+                </button>
+                <button class="ml-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="progress-bar w-full h-1 bg-gradient-to-r from-blue-500 to-purple-500" style="width: 0%;"></div>
+    </div>
+ 
+    <div class="fixed inset-0 bg-cover bg-center bg-no-repeat blur-3xl opacity-30"
+        style="background-image: url('../public/img/coverArt2.jpg');"></div>
+    <div class="container mx-auto px-4 py-8 relative z-10">
+        <div class="flex flex-col md:flex-row">
+            <div id="cover" class="md:w-2/5 mb-8 md:mb-0 text-center md:sticky md:top-8 md:self-start">
+                <div class="w-[300px] h-[300px] rounded-lg shadow-lg bg-gray-800 mx-auto bg-cover bg-no-repeat bg-center"
+                    style="background-image: url('../public/img/coverArt2.jpg'); box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);"
+                    alt="Wind of Revival Album Cover"></div>
+                <h1 class="album-title text-2xl font-bold mt-4">Wind of Revival: A Spiritual Journey Through Gospel
+                    Music</h1>
+                <p class="text-gray-400">Album • 2019</p>
+                <p class="text-gray-400">150 songs • 12 hours, 30 minutes</p>
+                <div class="flex space-x-4 mt-4 justify-center items-center">
+                    <button class="bg-gray-800 p-2 rounded-full"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg></button>
+                    <button class="bg-gray-800 p-2 rounded-full"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+                            </path>
+                        </svg></button>
+                    <button class="bg-white text-black p-[17px] rounded-full overflow-hidden w-12 h-12 ">
+                        <img src="../public/img/playButton.svg" alt="Play Button" class="object-cover">
+                    </button>
+                    <button class="bg-gray-800 p-2 rounded-full"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                            </path>
+                        </svg></button>
+                    <button class="bg-gray-800 p-2 rounded-full"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                            </path>
+                        </svg></button>
+                </div>
+            </div>
+            <div id="songList" class="md:w-3/5 md:pl-8 p-5">
+                <ul class="space-y-4">
+                    <li class="flex justify-between items-center">
+                        <div>
+                            <span class="font-semibold">1</span>
+                            <span class="ml-4">Spirit Move</span>
+                        </div>
+                        <span>5:07</span>
+                    </li>
+                    <li class="flex justify-between items-center">
+                        <div>
+                            <span class="font-semibold">2</span>
+                            <span class="ml-4">Mehia Wo Yesu</span>
+                        </div>
+                        <span>5:13</span>
+                    </li>
+                    <li class="flex justify-between items-center">
+                        <div>
+                            <span class="font-semibold">3</span>
+                            <span class="ml-4">Power of Prayer</span>
+                        </div>
+                        <span>8:20</span>
+                    </li>
+                    <li class="flex justify-between items-center">
+                        <div>
+                            <span class="font-semibold">4</span>
+                            <span class="ml-4">Tumi Wura</span>
+                        </div>
+                        <span>7:50</span>
+                    </li>
+                    <li class="flex justify-between items-center">
+                        <div>
+                            <span class="font-semibold">5</span>
+                            <span class="ml-4">Halleluyah Song</span>
+                        </div>
+                        <span>4:55</span>
+                    </li>
+                    <li class="flex justify-between items-center">
+                        <div>
+                            <span class="font-semibold">6</span>
+                            <span class="ml-4">Yahweh</span>
+                        </div>
+                        <span>6:10</span>
+                    </li>
+                    <li class="flex justify-between items-center">
+                        <div>
+                            <span class="font-semibold">7</span>
+                            <span class="ml-4">Fa Me Sie</span>
+                        </div>
+                        <span>1:22</span>
+                    </li>
+                    <li class="flex justify-between items-center">
+                        <div>
+                            <span class="font-semibold">8</span>
+                            <span class="ml-4">Hide Me</span>
+                        </div>
+                        <span>6:29</span>
+                    </li>
+                    <li class="flex justify-between items-center">
+                        <div>
+                            <span class="font-semibold">9</span>
+                            <span class="ml-4">Makamfo</span>
+                        </div>
+                        <span>5:26</span>
+                    </li>
+                    <li class="flex justify-between items-center">
+                        <div>
+                            <span class="font-semibold">10</span>
+                            <span class="ml-4">Sunsum Nwom</span>
+                        </div>
+                        <span>6:14</span>
+                    </li>
+                    <li class="flex justify-between items-center">
+                        <div>
+                            <span class="font-semibold">11</span>
+                            <span class="ml-4">Praise Medley</span>
+                        </div>
+                        <span>7:30</span>
+                    </li>
+                    <li class="flex justify-between items-center">
+                        <div>
+                            <span class="font-semibold">12</span>
+                            <span class="ml-4">Yesu Adi Nkunim</span>
+                        </div>
+                        <span>5:45</span>
+                    </li>
+                    <li class="flex justify-between items-center">
+                        <div>
+                            <span class="font-semibold">13</span>
+                            <span class="ml-4">Onwanwani</span>
+                        </div>
+                        <span>4:58</span>
+                    </li>
+                    <!-- Additional songs up to 150 -->
+                    <li class="flex justify-between items-center">
+                        <div>
+                            <span class="font-semibold">14</span>
+                            <span class="ml-4">Grace Overflow</span>
+                        </div>
+                        <span>5:32</span>
+                    </li>
+                    <li class="flex justify-between items-center">
+                        <div>
+                            <span class="font-semibold">15</span>
+                            <span class="ml-4">Onyame Ye Odo</span>
+                        </div>
+                        <span>4:47</span>
+                    </li>
+                    <!-- ... (continue with more songs) ... -->
+                    <li class="flex justify-between items-center">
+                        <div>
+                            <span class="font-semibold">149</span>
+                            <span class="ml-4">Eternal Praise</span>
+                        </div>
+                        <span>5:15</span>
+                    </li>
+                    <li class="flex justify-between items-center">
+                        <div>
+                            <span class="font-semibold">150</span>
+                            <span class="ml-4">Closing Worship</span>
+                        </div>
+                        <span>6:20</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
